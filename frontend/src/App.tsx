@@ -1,6 +1,12 @@
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+
 function App() {
   return (
-    <h1 className="text-3xl font-bold text-blue-500">Tailwind works</h1>
+    <div style={{ backgroundColor: 'var(--color-background)', minHeight: '100vh' }}>
+      <Navbar />
+      <Home />
+    </div>
   )
 }
 
