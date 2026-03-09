@@ -1,6 +1,18 @@
-import mongoose from 'mongoose'
+import mongoose, { Document } from 'mongoose'
 
-const userSchema = new mongoose.Schema({
+export interface IFavorite {
+  repoId: number
+  name: string
+  html_url: string
+}
+
+export interface IUser extends Document {
+  email: string
+  password: string
+  favorites: IFavorite[]
+}
+
+const userSchema = new mongoose.Schema<IUser>({
   email: {
     type: String,
     required: true,
@@ -20,4 +32,4 @@ const userSchema = new mongoose.Schema({
   ]
 }, { timestamps: true })
 
-export default mongoose.model('User', userSchema)
+export default mongoose.model<IUser>('User', userSchema)
