@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
+import authRoutes from './routes/auth'
 
 dotenv.config()
 
@@ -12,7 +13,7 @@ const MONGODB_URI = process.env.MONGODB_URI || ''
 // Middleware
 app.use(cors())
 app.use(express.json())
-
+app.use('/auth', authRoutes)
 // Test route
 app.get('/', (req, res) => {
   res.json({ message: 'GitHub Repo Explorer API is running!' })
