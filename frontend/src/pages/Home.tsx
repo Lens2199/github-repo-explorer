@@ -1,12 +1,30 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SearchBar from '../components/SearchBar'
 import RepoCard from '../components/RepoCard'
 import type { Repo } from '../types'
+import { useAuth } from '../hooks/useAuth'
+import api from '../lib/axios'
 
 export default function Home() {
   const [repos, setRepos] = useState<Repo[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [favorites, setFavorites] = useState<number[]>([])
+  const { isLoggedIn } = useAuth()
+
+  useEffect(() => {
+    if (!isLoggedIn) return
+    const fetchFavorites = async () => {
+      try {
+        const res = await api.get('/user/favorites')
+        const ids = res.data.map((fav: { repoId: number }) => fav.repoId)
+        setFavorites(ids)
+      } catch {
+        console.error('Failed to fetch favorites')
+      }
+    }
+    fetchFavorites()
+  }, [isLoggedIn])
 
   const handleSearch = async (username: string) => {
     setIsLoading(true)
@@ -22,12 +40,20 @@ export default function Home() {
 
       const data: Repo[] = await response.json()
       setRepos(data)
-     } catch {
+    } catch {
       setError('User not found or API limit reached. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
+
+  const handleFavoriteSaved = (repoId: number) => {
+  setFavorites((prev) =>
+    prev.includes(repoId)
+      ? prev.filter((id) => id !== repoId)
+      : [...prev, repoId]
+  )
+}
 
   return (
     <div className="max-w-6xl mx-auto px-4 pb-16">
@@ -44,7 +70,12 @@ export default function Home() {
       {repos.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {repos.map((repo) => (
-            <RepoCard key={repo.id} repo={repo} />
+            <RepoCard
+              key={repo.id}
+              repo={repo}
+              isSaved={favorites.includes(repo.id)}
+              onSave={handleFavoriteSaved}
+            />
           ))}
         </div>
       )}

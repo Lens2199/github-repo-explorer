@@ -1,18 +1,35 @@
+import { useState } from 'react'
 import type { Repo } from '../types'
 import { Star, Code, ExternalLink, Heart } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import api from '../lib/axios'
-import { useState } from 'react'
 
 interface RepoCardProps {
   repo: Repo
+  isSaved: boolean
+  onSave: (repoId: number) => void
 }
 
-export default function RepoCard({ repo }: RepoCardProps) {
+export default function RepoCard({ repo, isSaved, onSave }: RepoCardProps) {
   const { isLoggedIn } = useAuth()
-  const [saved, setSaved] = useState(false)
+  const [saved, setSaved] = useState(isSaved)
 
-  const handleSave = async () => {
+ const handleSave = async () => {
+  if (saved) {
+    // Unsave
+    try {
+      const res = await api.get('/user/favorites')
+      const fav = res.data.find((f: { repoId: number; _id: string }) => f.repoId === repo.id)
+      if (fav) {
+        await api.delete(`/user/favorites/${fav._id}`)
+        setSaved(false)
+        onSave(repo.id)
+      }
+    } catch {
+      console.error('Failed to unsave favorite')
+    }
+  } else {
+    // Save
     try {
       await api.post('/user/favorites', {
         repoId: repo.id,
@@ -20,10 +37,12 @@ export default function RepoCard({ repo }: RepoCardProps) {
         html_url: repo.html_url,
       })
       setSaved(true)
+      onSave(repo.id)
     } catch {
       console.error('Failed to save favorite')
     }
   }
+}
 
   return (
     <div
