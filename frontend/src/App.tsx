@@ -4,6 +4,8 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import { useAuth } from './hooks/useAuth'
+import Favorites from './pages/Favorites'
+
 
 function App() {
   const { isLoggedIn } = useAuth()
@@ -16,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={!isLoggedIn ? <Login /> : <Navigate to="/" />} />
           <Route path="/register" element={!isLoggedIn ? <Register /> : <Navigate to="/" />} />
+          <Route path="/favorites" element={<Favorites />} />
         </Routes>
       </div>
     </BrowserRouter>

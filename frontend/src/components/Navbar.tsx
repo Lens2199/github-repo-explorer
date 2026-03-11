@@ -19,16 +19,22 @@ export default function Navbar() {
 
       {/* Auth buttons */}
       <div className="flex items-center gap-3">
-        {isLoggedIn ? (
-          <>
-            <span className="text-sm" style={{ color: 'var(--color-muted)' }}>{email}</span>
-            <button
-              onClick={logout}
-              className="px-4 py-2 rounded-md text-sm font-medium"
-              style={{ color: 'var(--color-muted)' }}>
-              Logout
-            </button>
-          </>
+  {isLoggedIn ? (
+    <>
+      <button
+        onClick={() => navigate('/favorites')}
+        className="px-4 py-2 rounded-md text-sm font-medium"
+        style={{ color: 'var(--color-muted)' }}>
+        Favorites
+      </button>
+      <span className="text-sm" style={{ color: 'var(--color-muted)' }}>{email}</span>
+      <button
+        onClick={logout}
+        className="px-4 py-2 rounded-md text-sm font-medium"
+        style={{ color: 'var(--color-muted)' }}>
+        Logout
+      </button>
+    </>
         ) : (
           <>
             <button
